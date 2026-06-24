@@ -1,0 +1,5 @@
+# syswatch thresholds — alert when any metric exceeds these values
+cpu_pct:  90      # CPU usage %
+ram_pct:  90      # RAM usage %
+disk_pct: 85      # Disk usage %
+load_1m:  4.0     # Load average (1 minute) — set to number of cores for 100% load
