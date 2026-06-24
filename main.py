@@ -1,6 +1,6 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
-syswatch — system resource monitor
+syswatch â€” system resource monitor
 Tracks CPU, RAM, disk and network I/O.
 Sends Telegram alerts when configurable thresholds are exceeded.
 """
@@ -32,7 +32,7 @@ def print_snapshot(snap: dict):
     d = snap["disk"]
     l = snap["load"]
     n = snap["net"]
-    print(f"\n  syswatch — {snap['ts']} UTC — {HOSTNAME}")
+    print(f"\n  syswatch â€” {snap['ts']} UTC â€” {HOSTNAME}")
     print(f"  {'-'*55}")
     print(f"  CPU      {snap['cpu']:>6.1f}%")
     print(f"  RAM      {r['used_pct']:>6.1f}%   ({r['used_gb']} / {r['total_gb']} GB)")
@@ -42,7 +42,7 @@ def print_snapshot(snap: dict):
     print()
 
 
-# ── commands ─────────────────────────────────────────────────────────────────
+# â”€â”€ commands â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def cmd_check(args):
     cfg  = load_cfg()
@@ -102,7 +102,7 @@ def cmd_report(_args):
     print()
 
 
-# ── CLI ──────────────────────────────────────────────────────────────────────
+# â”€â”€ CLI â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def main():
     p = argparse.ArgumentParser(
@@ -125,3 +125,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
