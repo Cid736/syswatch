@@ -92,6 +92,7 @@ load_1m:  4.0     # Carga media 1m — igual al número de núcleos CPU para car
 ## Historial de versiones
 
 **v0.1.1** — 2026-06-24
+- Fix: el hilo collector ahora captura excepciones y sigue funcionando en lugar de morir silenciosamente
 - Fix: reemplazadas secuencias de guion largo corruptas en la salida CLI que causaban problemas de visualización en Windows
 
 **v0.1.0** — 2026-06-23

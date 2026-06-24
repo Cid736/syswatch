@@ -92,6 +92,7 @@ load_1m:  4.0     # Load average 1m — set to number of CPU cores for 100% load
 ## Changelog
 
 **v0.1.1** — 2026-06-24
+- Fix: collector thread now catches exceptions and keeps running instead of silently dying
 - Fix: replaced garbled em-dash sequences in CLI output that caused display issues on Windows
 
 **v0.1.0** — 2026-06-23
