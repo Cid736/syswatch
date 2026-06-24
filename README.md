@@ -1,3 +1,11 @@
+<p align="center">
+  <a href="#english">🇬🇧 English</a> &nbsp;·&nbsp; <a href="#español">🇪🇸 Español</a>
+</p>
+
+---
+
+<a name="english"></a>
+
 # syswatch
 
 System resource monitor for Linux servers. Tracks CPU, RAM, disk usage and load average. Sends Telegram alerts when configurable thresholds are exceeded. Runs as a one-shot check or as a daemon.
@@ -10,8 +18,8 @@ Python · psutil · PyYAML · SQLite · Telegram Bot API
 ```
 $ python main.py check
 
-  syswatch — 2026-06-24 10:32:01 UTC — myserver
-  ─────────────────────────────────────────────────────
+  syswatch -- 2026-06-24 10:32:01 UTC -- myserver
+  -------------------------------------------------
   CPU        14.3%
   RAM        67.8%   (5.42 / 8.0 GB)
   Disk       73.1%   (146.2 / 200.0 GB)
@@ -19,24 +27,13 @@ $ python main.py check
   Net I/O    sent 1240.5 MB   recv 8730.2 MB
 
   [ok] All metrics within thresholds
-
-$ python main.py run --interval 5
-
-  Monitoring every 5 min. Ctrl+C to stop.
-
-  syswatch — 2026-06-24 10:37:01 UTC — myserver
-  ─────────────────────────────────────────────────────
-  CPU        93.7%
-  RAM        91.2%   (7.3 / 8.0 GB)
-  ...
-  [!] CPU at 93.7% (threshold 90%) | RAM at 91.2% (threshold 90%)
 ```
 
 Telegram alert:
 ```
-⚠️ syswatch alert — myserver
-  • CPU at 93.7% (threshold 90%)
-  • RAM at 91.2% (threshold 90%)
+syswatch alert -- myserver
+  - CPU at 93.7% (threshold 90%)
+  - RAM at 91.2% (threshold 90%)
 ```
 
 ## Setup
@@ -73,7 +70,7 @@ Edit `config.yml` to set your thresholds:
 cpu_pct:  90      # CPU usage %
 ram_pct:  90      # RAM usage %
 disk_pct: 85      # Disk usage %
-load_1m:  4.0     # Load average 1m — set to number of CPU cores for 100% load
+load_1m:  4.0     # Load average 1m
 ```
 
 ## Telegram setup
@@ -97,4 +94,62 @@ load_1m:  4.0     # Load average 1m — set to number of CPU cores for 100% load
 
 **v0.1.0** — 2026-06-23
 - Initial release: CPU, RAM, disk and load monitoring, Telegram alerts, configurable thresholds
-- Web dashboard with progress bars, history table and Start/Stop/Restart controls, alpha banner
+
+---
+
+<a name="español"></a>
+
+# syswatch
+
+Monitor de recursos del sistema para servidores Linux. Rastrea CPU, RAM, disco y carga media. Envía alertas por Telegram cuando se superan los umbrales configurables. Funciona como comprobación puntual o como demonio.
+
+## Stack
+Python · psutil · PyYAML · SQLite · Telegram Bot API
+
+## Instalación
+
+```bash
+git clone https://github.com/Cid736/syswatch.git
+cd syswatch
+pip install -r requirements.txt
+cp .env.example .env
+# Añade tus credenciales de Telegram (opcional — sin ellas las alertas no se envían)
+```
+
+## Uso
+
+```bash
+# Comprobación puntual (alerta si se superan umbrales)
+python main.py check
+
+# Comprobación puntual sin enviar alerta
+python main.py check --no-alert
+
+# Mostrar métricas actuales + umbrales configurados
+python main.py report
+
+# Modo demonio — comprueba cada 5 minutos, alerta en nuevas superaciones
+python main.py run --interval 5
+```
+
+## Configuración
+
+Edita `config.yml` para definir tus umbrales:
+
+```yaml
+cpu_pct:  90      # % de uso de CPU
+ram_pct:  90      # % de uso de RAM
+disk_pct: 85      # % de uso de disco
+load_1m:  4.0     # Carga media 1m
+```
+
+## Automatizar con cron (Linux)
+
+```bash
+# Comprobar cada 5 minutos
+*/5 * * * * /usr/bin/python3 /opt/syswatch/main.py check >> /var/log/syswatch.log 2>&1
+```
+
+## Licencia
+
+MIT
