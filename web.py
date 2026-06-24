@@ -28,11 +28,14 @@ def load_cfg() -> dict:
 def collector():
     global latest
     while not _stop_event.is_set():
-        snap = snapshot(cpu_interval=1.0)
-        latest = snap
-        history.append(snap)
-        if len(history) > HISTORY_MAX:
-            history.pop(0)
+        try:
+            snap = snapshot(cpu_interval=1.0)
+            latest = snap
+            history.append(snap)
+            if len(history) > HISTORY_MAX:
+                history.pop(0)
+        except Exception as e:
+            print(f'[syswatch] collector error: {e}')
         _stop_event.wait(10)
 
 
