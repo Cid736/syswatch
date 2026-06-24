@@ -88,3 +88,12 @@ load_1m:  4.0     # Carga media 1m — igual al número de núcleos CPU para car
 # Comprobar cada 5 minutos
 */5 * * * * /usr/bin/python3 /opt/syswatch/main.py check >> /var/log/syswatch.log 2>&1
 ```
+
+## Historial de versiones
+
+**v0.1.1** — 2026-06-24
+- Fix: reemplazadas secuencias de guion largo corruptas en la salida CLI que causaban problemas de visualización en Windows
+
+**v0.1.0** — 2026-06-23
+- Publicación inicial: monitorización de CPU, RAM, disco y carga, alertas Telegram, umbrales configurables
+- Dashboard web con barras de progreso, historial y controles Iniciar/Parar/Reiniciar, banner alfa

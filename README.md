@@ -88,3 +88,12 @@ load_1m:  4.0     # Load average 1m — set to number of CPU cores for 100% load
 # Check every 5 minutes
 */5 * * * * /usr/bin/python3 /opt/syswatch/main.py check >> /var/log/syswatch.log 2>&1
 ```
+
+## Changelog
+
+**v0.1.1** — 2026-06-24
+- Fix: replaced garbled em-dash sequences in CLI output that caused display issues on Windows
+
+**v0.1.0** — 2026-06-23
+- Initial release: CPU, RAM, disk and load monitoring, Telegram alerts, configurable thresholds
+- Web dashboard with progress bars, history table and Start/Stop/Restart controls, alpha banner
