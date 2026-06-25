@@ -8,15 +8,11 @@ load_dotenv()
 app    = Flask(__name__)
 CONFIG = Path(__file__).parent / "config.yml"
 HOSTNAME = socket.gethostname()
-_LOCAL_ADDRS = {'127.0.0.1', '::1', '::ffff:127.0.0.1'}
 CONTROL_TOKEN = os.environ.get('CONTROL_TOKEN', '')
 
 
 def _check_control():
-    if CONTROL_TOKEN:
-        if request.form.get('token') != CONTROL_TOKEN:
-            abort(403)
-    elif request.remote_addr not in _LOCAL_ADDRS:
+    if not CONTROL_TOKEN or request.form.get('token') != CONTROL_TOKEN:
         abort(403)
 
 history: list[dict] = []

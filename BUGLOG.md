@@ -1,7 +1,14 @@
 # Bug Log — syswatch
 
-## 2026-06-25
+## 2026-06-25 — Revisión 1
 
 ### [HIGH] Endpoints `/control/*` sin autenticación
+- **Fix:** Añadida `_check_control()` con token o restricción a localhost.
+
+---
+
+## 2026-06-25 — Revisión 2
+
+### [LOW] CSRF en endpoints `/control/*` via bypass de localhost
 - **Archivo:** `web.py`
-- **Fix:** Añadida función `_check_control()` que restringe los endpoints de control a localhost (127.0.0.1/::1) si no hay `CONTROL_TOKEN` configurado, o verifica el token en el formulario si está configurado.
+- **Fix:** Eliminado el bypass de localhost. `CONTROL_TOKEN` es ahora obligatorio.
