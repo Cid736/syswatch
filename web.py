@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, jsonify, redirect
+from flask import Flask, render_template_string, jsonify, redirect, request, abort
 from monitor import snapshot, check_thresholds
 import threading, time, os, yaml, socket
 from pathlib import Path
@@ -8,6 +8,16 @@ load_dotenv()
 app    = Flask(__name__)
 CONFIG = Path(__file__).parent / "config.yml"
 HOSTNAME = socket.gethostname()
+_LOCAL_ADDRS = {'127.0.0.1', '::1', '::ffff:127.0.0.1'}
+CONTROL_TOKEN = os.environ.get('CONTROL_TOKEN', '')
+
+
+def _check_control():
+    if CONTROL_TOKEN:
+        if request.form.get('token') != CONTROL_TOKEN:
+            abort(403)
+    elif request.remote_addr not in _LOCAL_ADDRS:
+        abort(403)
 
 history: list[dict] = []
 latest:  dict       = {}
@@ -220,6 +230,7 @@ def index():
 
 @app.route("/control/start", methods=["POST"])
 def ctrl_start():
+    _check_control()
     global _collector_thread
     if _collector_thread is None or not _collector_thread.is_alive():
         start_collector()
@@ -228,12 +239,14 @@ def ctrl_start():
 
 @app.route("/control/stop", methods=["POST"])
 def ctrl_stop():
+    _check_control()
     stop_collector()
     return redirect("/")
 
 
 @app.route("/control/restart", methods=["POST"])
 def ctrl_restart():
+    _check_control()
     stop_collector()
     time.sleep(0.3)
     start_collector()
