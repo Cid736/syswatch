@@ -95,6 +95,12 @@ load_1m:  4.0     # Load average 1m
 **v0.1.0** — 2026-06-23
 - Initial release: CPU, RAM, disk and load monitoring, Telegram alerts, configurable thresholds
 
+## Security
+
+Automated security reviews are powered by [Claude](https://claude.ai) (Anthropic AI) and run on every significant change to detect vulnerabilities, insecure patterns and dependency risks. Findings are tracked in `BUGLOG.md`.
+
+Found a vulnerability? Open an issue or contact directly.
+
 ---
 
 <a name="español"></a>
@@ -150,6 +156,11 @@ load_1m:  4.0     # Carga media 1m
 */5 * * * * /usr/bin/python3 /opt/syswatch/main.py check >> /var/log/syswatch.log 2>&1
 ```
 
+## Seguridad
+
+Las revisiones de seguridad automatizadas utilizan [Claude](https://claude.ai) (Anthropic AI) y se ejecutan en cada cambio significativo para detectar vulnerabilidades, patrones inseguros y riesgos en dependencias. Los hallazgos se registran en `BUGLOG.md`.
+
+¿Encontraste una vulnerabilidad? Abre un issue o contacta directamente.
 ## Licencia
 
 MIT
