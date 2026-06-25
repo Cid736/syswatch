@@ -6,13 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 app    = Flask(__name__)
+app.secret_key = os.environ.get('FLASK_SECRET_KEY', os.urandom(32))
 CONFIG = Path(__file__).parent / "config.yml"
 HOSTNAME = socket.gethostname()
 CONTROL_TOKEN = os.environ.get('CONTROL_TOKEN', '')
 
+if not CONTROL_TOKEN:
+    raise RuntimeError("CONTROL_TOKEN must be set in .env before starting syswatch")
+
 
 def _check_control():
-    if not CONTROL_TOKEN or request.form.get('token') != CONTROL_TOKEN:
+    if request.form.get('token') != CONTROL_TOKEN:
         abort(403)
 
 history: list[dict] = []
@@ -249,8 +253,9 @@ def ctrl_restart():
     return redirect("/")
 
 
-@app.route("/api/metrics")
+@app.route("/api/metrics", methods=["POST"])
 def api_metrics():
+    _check_control()
     return jsonify(latest if latest else snapshot())
 
 
@@ -258,5 +263,14 @@ if __name__ == "__main__":
     start_collector()
     time.sleep(1.5)
     PORT = int(os.environ.get("PORT", 8081))
+    HOST = os.environ.get("HOST", "127.0.0.1")
     print(f"[syswatch] dashboard -> http://localhost:{PORT}")
-    app.run(host="0.0.0.0", port=PORT)
+
+    @app.after_request
+    def security_headers(r):
+        r.headers['X-Frame-Options'] = 'DENY'
+        r.headers['X-Content-Type-Options'] = 'nosniff'
+        r.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        return r
+
+    app.run(host=HOST, port=PORT)
