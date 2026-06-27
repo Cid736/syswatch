@@ -97,9 +97,28 @@ load_1m:  4.0     # Load average 1m
 
 ## Security
 
-Automated security reviews are powered by [Claude](https://claude.ai) (Anthropic AI) and run on every significant change to detect vulnerabilities, insecure patterns and dependency risks. Findings are tracked in [`BUGLOG.md`](BUGLOG.md).
+Automated security reviews are powered by [Claude](https://claude.ai) (Anthropic AI) and run on every significant change. Findings are tracked in [`BUGLOG.md`](BUGLOG.md).
 
-**Last review:** 2026-06-25 — 2 issues found (1 high, 1 low) — all patched. Set CONTROL_TOKEN in .env to protect the dashboard.
+**Last review:** 2026-06-28 — 3 new issues found (1 high, 1 medium, 2 low) — all patched.
+
+### Model
+
+| Control | Implementation |
+|---|---|
+| Dashboard authentication | Session-based login at `/login`; `CONTROL_TOKEN` (required) authenticates the session; `FLASK_SECRET_KEY` signs cookies |
+| No user-supplied shell commands | psutil reads `/proc` directly — no subprocess calls, no injection surface |
+| Secret management | Credentials via `.env` / environment variables only; `.env` is git-ignored |
+| Threshold error safety | All threshold defaults use `.get()` — no `KeyError` if `config.yml` is missing fields |
+| Security headers | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` on every response |
+
+### Required `.env` variables
+
+```
+CONTROL_TOKEN=<random 32+ char string>    # protects the web dashboard
+FLASK_SECRET_KEY=<random 32+ char string> # signs Flask session cookies
+TELEGRAM_TOKEN=<bot token>               # optional — alerts won't fire without it
+TELEGRAM_CHAT_ID=<chat id>               # optional
+```
 
 Found a vulnerability? Open an issue or contact directly.
 
@@ -160,9 +179,17 @@ load_1m:  4.0     # Carga media 1m
 
 ## Seguridad
 
-Las revisiones de seguridad automatizadas utilizan [Claude](https://claude.ai) (Anthropic AI) y se ejecutan en cada cambio significativo para detectar vulnerabilidades, patrones inseguros y riesgos en dependencias. Los hallazgos se registran en [`BUGLOG.md`](BUGLOG.md).
+Las revisiones de seguridad automatizadas utilizan [Claude](https://claude.ai) (Anthropic AI) y se ejecutan en cada cambio significativo. Los hallazgos se registran en [`BUGLOG.md`](BUGLOG.md).
 
-**Última revisión:** 2026-06-25 — 2 vulnerabilidades encontradas (1 alta, 1 baja) — todas parcheadas. Configurar CONTROL_TOKEN en .env para proteger el panel.
+**Última revisión:** 2026-06-28 — 3 nuevas vulnerabilidades encontradas (1 alta, 1 media, 2 bajas) — todas parcheadas.
+
+| Control | Implementación |
+|---|---|
+| Autenticación del dashboard | Login de sesión en `/login`; `CONTROL_TOKEN` (obligatorio) autentica la sesión; `FLASK_SECRET_KEY` firma las cookies |
+| Sin comandos de shell | psutil lee `/proc` directamente — sin subprocess, sin superficie de inyección |
+| Gestión de secretos | Credenciales solo via `.env` / variables de entorno; `.env` en `.gitignore` |
+| Seguridad en umbrales | Todos los defaults usan `.get()` — sin `KeyError` si faltan campos en `config.yml` |
+| Cabeceras de seguridad | `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy` en cada respuesta |
 
 ¿Encontraste una vulnerabilidad? Abre un issue o contacta directamente.
 ## Licencia

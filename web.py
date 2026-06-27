@@ -1,4 +1,4 @@
-from flask import Flask, render_template_string, jsonify, redirect, request, abort
+from flask import Flask, render_template_string, jsonify, redirect, request, abort, session
 from monitor import snapshot, check_thresholds
 import threading, time, os, yaml, socket
 from pathlib import Path
@@ -16,7 +16,8 @@ if not CONTROL_TOKEN:
 
 
 def _check_control():
-    if request.form.get('token') != CONTROL_TOKEN:
+    """Verify the request carries a valid session (authenticated via CONTROL_TOKEN)."""
+    if not session.get('authenticated'):
         abort(403)
 
 history: list[dict] = []
@@ -62,6 +63,38 @@ def stop_collector():
     _stop_event.set()
     collector_status = "stopped"
 
+
+LOGIN_TEMPLATE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>syswatch — Login</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { font-family:'Segoe UI',sans-serif; background:#0d1117; color:#c9d1d9;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; }
+    .box { background:#161b22; border:1px solid #21262d; border-radius:10px; padding:32px; width:340px; }
+    h1 { font-size:1.1rem; color:#e6edf3; margin-bottom:20px; }
+    label { font-size:0.82rem; color:#8b949e; display:block; margin-bottom:6px; }
+    input[type=password] { width:100%; padding:8px 12px; background:#0d1117; border:1px solid #30363d;
+                           border-radius:6px; color:#c9d1d9; font-size:0.9rem; margin-bottom:14px; }
+    button { width:100%; padding:9px; background:#1a3a1f; color:#3fb950; border:1px solid #3fb950;
+             border-radius:6px; font-size:0.88rem; font-weight:600; cursor:pointer; }
+    .err { color:#f85149; font-size:0.8rem; margin-bottom:12px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>syswatch</h1>
+    <form method="post">
+      <label>Control token</label>
+      <input type="password" name="token" autofocus autocomplete="current-password"/>
+      {% if error %}<div class="err">{{ error }}</div>{% endif %}
+      <button type="submit">Sign in</button>
+    </form>
+  </div>
+</body>
+</html>"""
 
 TEMPLATE = """<!DOCTYPE html>
 <html lang="es">
@@ -214,6 +247,8 @@ TEMPLATE = """<!DOCTYPE html>
 
 @app.route("/")
 def index():
+    if not session.get('authenticated'):
+        return redirect("/login")
     cfg    = load_cfg()
     snap   = latest if latest else snapshot()
     alerts = check_thresholds(snap, cfg)
@@ -253,7 +288,24 @@ def ctrl_restart():
     return redirect("/")
 
 
-@app.route("/api/metrics", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = ""
+    if request.method == "POST":
+        if request.form.get("token") == CONTROL_TOKEN:
+            session["authenticated"] = True
+            return redirect("/")
+        error = "Invalid token."
+    return render_template_string(LOGIN_TEMPLATE, error=error)
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return redirect("/login")
+
+
+@app.route("/api/metrics", methods=["GET"])
 def api_metrics():
     _check_control()
     return jsonify(latest if latest else snapshot())

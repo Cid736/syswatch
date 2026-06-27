@@ -42,13 +42,17 @@ def snapshot(cpu_interval=1.0) -> dict:
 
 def check_thresholds(snap: dict, cfg: dict) -> list[str]:
     alerts = []
-    if snap["cpu"] >= cfg.get("cpu_pct", 90):
-        alerts.append(f"CPU at {snap['cpu']}% (threshold {cfg['cpu_pct']}%)")
-    if snap["ram"]["used_pct"] >= cfg.get("ram_pct", 90):
-        alerts.append(f"RAM at {snap['ram']['used_pct']}% (threshold {cfg['ram_pct']}%)")
-    if snap["disk"]["used_pct"] >= cfg.get("disk_pct", 85):
-        alerts.append(f"Disk at {snap['disk']['used_pct']}% (threshold {cfg['disk_pct']}%)")
+    cpu_thr  = cfg.get("cpu_pct",  90)
+    ram_thr  = cfg.get("ram_pct",  90)
+    disk_thr = cfg.get("disk_pct", 85)
+    load_thr = cfg.get("load_1m",  4.0)
+    if snap["cpu"] >= cpu_thr:
+        alerts.append(f"CPU at {snap['cpu']}% (threshold {cpu_thr}%)")
+    if snap["ram"]["used_pct"] >= ram_thr:
+        alerts.append(f"RAM at {snap['ram']['used_pct']}% (threshold {ram_thr}%)")
+    if snap["disk"]["used_pct"] >= disk_thr:
+        alerts.append(f"Disk at {snap['disk']['used_pct']}% (threshold {disk_thr}%)")
     load1 = snap["load"][0]
-    if load1 >= cfg.get("load_1m", 4.0):
-        alerts.append(f"Load avg (1m) at {load1} (threshold {cfg['load_1m']})")
+    if load1 >= load_thr:
+        alerts.append(f"Load avg (1m) at {load1} (threshold {load_thr})")
     return alerts
